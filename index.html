@@ -16,7 +16,6 @@
     --para-bg:#edf2ff;
     --impara:#a4520b;
     --impara-bg:#fff4df;
-    --both:#586b84;
     --both-bg:#f0f4f8;
     --radius:20px;
   }
@@ -267,17 +266,7 @@
     color:#075b42;background:#bbf6d9;font-size:.61rem;font-weight:900;letter-spacing:.08em;
   }
 
-  /* ---------- LEGEND ---------- */
-  .legend{
-    margin-top:17px;background:#fff;border:1px solid var(--line);border-radius:var(--radius);
-    padding:16px 20px;display:flex;flex-wrap:wrap;gap:20px;align-items:center;
-    font-size:.82rem;color:#415773;box-shadow:0 6px 18px rgba(26,47,79,.06);
-  }
-  .lg{display:flex;align-items:center;gap:8px}
-  .sw{width:24px;height:17px;border-radius:5px;border-left:4px solid}
-  .sw.both{background:var(--both-bg);border-color:var(--both)}
-  .sw.para{background:var(--para-bg);border-color:var(--para)}
-  .sw.impara{background:var(--impara-bg);border-color:var(--impara)}
+  /* ---------- FOOTER ---------- */
   .credit{margin-top:24px;text-align:center;color:#667990;font-size:.78rem;font-weight:650;letter-spacing:.04em}
   .credit strong{color:#304fb5;font-weight:900;letter-spacing:.1em}
 
@@ -369,7 +358,6 @@
     .ev{min-height:0;padding:10px 12px}
     .ev .nm{font-size:.86rem}
     .ev .meta,.ev .prof{font-size:.78rem}
-    .legend{flex-direction:column;align-items:flex-start;gap:12px;padding:16px;font-size:.8rem}
   }
 
   @media (max-width:380px){
@@ -460,11 +448,6 @@
 
   <div class="cards" id="cards"></div>
 
-  <div class="legend">
-    <div class="lg"><span class="sw both"></span> În fiecare săptămână</div>
-    <div class="lg"><span class="sw para"></span> Doar săptămâna pară (triunghiul de sus)</div>
-    <div class="lg"><span class="sw impara"></span> Doar săptămâna impară (triunghiul de jos)</div>
-  </div>
   <footer class="credit">Powered by <strong>NRB</strong></footer>
 
 </main>
