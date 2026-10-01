@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Orar Semestrul 1 — Grupa 1221</title>
+<style>
+  :root{
+    --bg:#f3f6fb;
+    --card:#ffffff;
+    --ink:#14233b;
+    --muted:#586c85;
+    --line:#dce4ee;
+    --accent:#304fb5;
+    --para:#304fb5;
+    --para-bg:#edf2ff;
+    --impara:#a4520b;
+    --impara-bg:#fff4df;
+    --both:#586b84;
+    --both-bg:#f0f4f8;
+    --radius:20px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+    background:
+      radial-gradient(900px 480px at -8% -4%,#dce7f6 0%,transparent 70%),
+      radial-gradient(750px 500px at 105% 0%,#e0f1ec 0%,transparent 72%),
+      var(--bg);
+    color:var(--ink);
+    min-height:100vh;
+    padding:26px 18px 52px;
+  }
+  .wrap{max-width:1280px;margin:0 auto}
+  button{font-family:inherit}
+  button:focus-visible{outline:3px solid #ee9d28;outline-offset:3px}
+
+  /* ---------- HEADER ---------- */
+  .hero{
+    position:relative;isolation:isolate;overflow:hidden;
+    background:
+      linear-gradient(110deg,rgba(14,29,47,.83),rgba(12,36,51,.79)),
+      url("fundal-orar.jpg") center 67% / cover no-repeat,
+      linear-gradient(120deg,#142339 0%,#193756 65%,#145253 125%);
+    color:#fff;border-radius:28px;padding:38px 44px;
+    box-shadow:0 22px 48px rgba(24,46,75,.22);
+    display:grid;grid-template-columns:minmax(0,1fr) minmax(290px,340px);
+    gap:30px;align-items:center;
+  }
+  .hero::before{
+    content:"";position:absolute;z-index:-1;width:520px;height:520px;
+    right:14%;top:-250px;border-radius:50%;
+    background:radial-gradient(circle,rgba(63,218,176,.22),transparent 68%);
+    pointer-events:none;
+  }
+  .hero::after{
+    content:"1221";position:absolute;z-index:-1;right:26%;bottom:-92px;
+    font-size:230px;font-weight:900;letter-spacing:-.09em;
+    color:rgba(255,255,255,.035);pointer-events:none;
+  }
+  .eyebrow{
+    display:inline-flex;gap:9px;align-items:center;color:#a9c4d2;
+    font-size:.72rem;font-weight:850;letter-spacing:.14em;text-transform:uppercase;
+  }
+  .eyebrow::before{
+    content:"";width:9px;height:9px;background:#5ce6b5;border-radius:50%;
+    box-shadow:0 0 0 5px rgba(92,230,181,.14);
+  }
+  .title h1{
+    font-size:clamp(2.25rem,4.4vw,3.75rem);line-height:1.04;
+    letter-spacing:-.06em;font-weight:850;margin:22px 0 14px;
+  }
+  .title h1 span{display:block;color:#6de2c0}
+  .title p{color:#c2d2df;font-size:.96rem;line-height:1.6}
+  .title strong{color:#fff}
+  .today-box{
+    align-self:stretch;display:flex;flex-direction:column;justify-content:center;
+    background:rgba(255,255,255,.095);border:1px solid rgba(255,255,255,.2);
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    border-radius:20px;padding:22px 24px;
+  }
+  .live-line{display:flex;justify-content:space-between;align-items:center;gap:12px}
+  .live-indicator{
+    display:inline-flex;align-items:center;gap:9px;color:#79e9c5;
+    font-size:.7rem;font-weight:850;letter-spacing:.13em;white-space:nowrap;
+  }
+  .live-dot{width:8px;height:8px;border-radius:50%;background:#66f0b7;box-shadow:0 0 0 5px rgba(102,240,183,.18)}
+  .live-clock{font-size:1.5rem;font-weight:850;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+  .date-label{
+    color:#a9c4d2;font-size:.72rem;font-weight:800;letter-spacing:.13em;
+    margin-top:18px;
+  }
+  #todayStr{font-size:1.36rem;font-weight:800;line-height:1.3;margin-top:5px}
+  .week-badge{
+    align-self:flex-start;border-radius:8px;padding:7px 10px;margin-top:14px;
+    font-size:.73rem;font-weight:850;letter-spacing:.065em;
+  }
+  .week-badge.impara{background:#ffe5b6;color:#753807}
+  .week-badge.para{background:#dbe7ff;color:#243f9c}
+
+  /* ---------- CONTROLS ---------- */
+  .controls{
+    margin-top:18px;background:#fff;border:1px solid var(--line);border-radius:var(--radius);
+    padding:18px;display:grid;grid-template-columns:minmax(0,1fr) auto;
+    gap:22px;align-items:end;box-shadow:0 10px 25px rgba(26,47,79,.07);
+  }
+  .control-title{
+    color:#62748a;font-weight:850;font-size:.69rem;letter-spacing:.13em;
+    text-transform:uppercase;margin:0 0 10px 4px;
+  }
+  .seg{
+    display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;
+    background:#f0f3f8;border:1px solid #e5ebf2;border-radius:16px;padding:6px;
+  }
+  .seg button{
+    display:flex;align-items:center;gap:12px;text-align:left;
+    min-height:56px;padding:9px 14px;border:1px solid transparent;
+    border-radius:11px;background:transparent;color:#38516c;cursor:pointer;
+    font-size:.9rem;font-weight:800;transition:background .18s,box-shadow .18s,transform .18s;
+  }
+  .seg button:hover{background:#fff;box-shadow:0 4px 12px rgba(26,47,79,.1);transform:translateY(-1px)}
+  .seg button.on{background:#182f4c;border-color:#182f4c;color:#fff;box-shadow:0 7px 15px rgba(24,47,76,.19)}
+  .seg button.on:hover{background:#213d60}
+  .seg button.on::after{content:"✓";margin-left:auto;font-size:1.1rem;color:#82edc2}
+  .week-icon{
+    display:inline-grid;place-items:center;flex:0 0 auto;width:34px;height:34px;
+    border-radius:9px;background:#fff;color:#425b79;font-weight:900;font-size:.8rem;
+  }
+  .seg button.on[data-w="impara"] .week-icon{background:#ffe3ad;color:#8a4608}
+  .seg button.on[data-w="para"] .week-icon{background:#dce8ff;color:#324fab}
+  .right-ctl{display:flex;gap:9px;align-items:center}
+  .ghost{
+    display:inline-flex;align-items:center;justify-content:center;gap:9px;
+    min-height:68px;max-width:180px;padding:10px 14px;border:1.5px solid var(--line);
+    border-radius:12px;background:#fff;color:#34516b;font-size:.84rem;font-weight:800;
+    line-height:1.25;text-align:center;cursor:pointer;
+    transition:background .18s,border-color .18s,box-shadow .18s,transform .18s;
+  }
+  .ghost:hover{transform:translateY(-2px);box-shadow:0 7px 15px rgba(21,45,75,.14)}
+  .btn-symbol{font-size:1.25rem;font-weight:850;line-height:1}
+  #btnToday{background:#0e8067;border-color:#0e8067;color:#fff;box-shadow:0 7px 16px rgba(14,128,103,.18)}
+  #btnToday:hover{background:#086b57}
+  #btnHighlight.on{border-color:#95d9bf;background:#e7f8f1;color:#106447}
+  #btnHighlight:hover{border-color:#6abea0}
+
+  .banner{
+    margin-top:14px;border-radius:12px;padding:13px 16px;font-size:.88rem;font-weight:700;
+    display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);
+    border-left:4px solid var(--impara);color:#394d64;
+  }
+  .banner::before{content:"●";font-size:.68rem;color:var(--impara)}
+  .banner.para{border-left-color:var(--para)}
+  .banner.para::before{color:var(--para)}
+
+  /* ---------- ASTĂZI / URMEAZĂ ---------- */
+  .focus{
+    display:grid;grid-template-columns:170px minmax(0,1fr);margin-top:18px;
+    background:#182e4b;color:#fff;border-radius:var(--radius);overflow:hidden;
+    box-shadow:0 12px 26px rgba(26,47,79,.14);
+  }
+  .focus-when{
+    display:flex;flex-direction:column;justify-content:center;gap:3px;
+    padding:21px;background:#12243b;border-right:1px solid rgba(255,255,255,.09);
+  }
+  .focus-when .caption,.focus-when .unit{
+    color:#a7c0d3;font-size:.68rem;font-weight:800;letter-spacing:.12em;
+  }
+  .focus-number{font-size:2.8rem;font-weight:850;line-height:1.05;font-variant-numeric:tabular-nums}
+  .focus-detail{
+    min-width:0;display:flex;align-items:center;justify-content:space-between;gap:18px;
+    padding:18px 24px;
+  }
+  .focus-content{min-width:0}
+  .focus-label{
+    display:flex;align-items:center;gap:8px;color:#77edc4;
+    font-size:.71rem;font-weight:850;letter-spacing:.12em;
+  }
+  .focus-label::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+  .focus-name{display:block;margin-top:7px;font-size:clamp(.98rem,1.6vw,1.27rem);line-height:1.27;overflow-wrap:anywhere}
+  .focus-sub{margin-top:6px;color:#b6ccdc;font-size:.82rem;font-weight:650;line-height:1.45}
+  .focus-time{
+    flex:0 0 auto;min-width:110px;padding:11px 13px;text-align:center;white-space:nowrap;
+    font-size:.88rem;font-weight:850;font-variant-numeric:tabular-nums;
+    color:#c4ffdf;background:#244565;border:1px solid #35657b;border-radius:11px;
+  }
+  .focus-time[hidden]{display:none}
+  .schedule-heading{
+    display:flex;align-items:end;justify-content:space-between;gap:12px;margin:25px 0 12px;
+  }
+  .schedule-heading .kicker{
+    color:#0c8067;font-weight:850;font-size:.7rem;letter-spacing:.14em;
+    text-transform:uppercase;margin-bottom:5px;
+  }
+  .schedule-heading h2{font-size:1.35rem;letter-spacing:-.03em}
+  .week-status{padding:7px 11px;border-radius:9px;font-size:.74rem;font-weight:850;white-space:nowrap}
+  .week-status.impara{background:#ffe9c5;color:#814008}
+  .week-status.para{background:#e2eaff;color:#2b479f}
+
+  /* ---------- TABLE ---------- */
+  .board{
+    background:#fff;border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:0 10px 25px rgba(26,47,79,.08);
+    overflow:hidden;overflow-x:auto;-webkit-overflow-scrolling:touch;
+  }
+  table{width:100%;min-width:980px;border-collapse:separate;border-spacing:0;table-layout:fixed}
+  thead th{
+    background:#1b3452;color:#fff;padding:15px 12px;text-align:left;
+    font-size:.76rem;font-weight:850;letter-spacing:.09em;
+    border-right:1px solid rgba(255,255,255,.12);
+  }
+  thead th:last-child{border-right:0}
+  thead th:first-child{text-align:center}
+  thead th.now{background:#0d8268}
+  thead th small{display:block;color:#c2ffe5;font-size:.66rem;letter-spacing:.05em;margin-top:5px}
+  td{border-right:1px solid var(--line);border-bottom:1px solid var(--line);vertical-align:top;padding:8px;height:94px}
+  td:last-child{border-right:0}
+  tbody tr:last-child td{border-bottom:0}
+  td.hour{
+    background:#f7f9fc;color:#4a607a;font-weight:850;font-size:.8rem;
+    text-align:center;vertical-align:middle;width:90px;white-space:nowrap;
+  }
+  td.hour.now{background:#e4f9ef;color:#087157}
+  td.daycol{width:calc((100% - 90px)/5)}
+  td.today-col{background:#f2faf6}
+  td.free{background:#fafbfd}
+  td.free.today-col{background:#f2faf6}
+  td.partial-start{position:relative;padding:0;background:#fff}
+  td.partial-start.today-col{background:#f2faf6}
+  td.partial-start .partial-free{
+    position:absolute;top:0;left:0;right:0;height:25%;
+    display:flex;align-items:center;justify-content:center;padding:0 5px;
+    border-bottom:1px dashed #b8c6d6;color:#667b93;
+    font-size:.66rem;font-weight:800;white-space:nowrap;
+  }
+  td.partial-start .ev{
+    position:absolute;top:calc(25% + 8px);left:8px;right:8px;bottom:8px;
+    min-height:0;height:auto;
+  }
+
+  /* ---------- EVENT CARD ---------- */
+  .ev{
+    min-height:76px;height:100%;display:flex;flex-direction:column;gap:5px;
+    padding:10px 11px;border:1px solid #e0e7ef;border-left:4px solid #8493aa;
+    border-radius:11px;background:var(--both-bg);cursor:default;
+    transition:transform .18s,box-shadow .18s;
+  }
+  .ev:hover{transform:translateY(-2px);box-shadow:0 7px 18px rgba(21,45,75,.13)}
+  .ev + .ev{margin-top:6px}
+  .ev.both{background:var(--both-bg);border-left-color:#8493aa}
+  .ev.para{background:var(--para-bg);border-left-color:var(--para)}
+  .ev.impara{background:var(--impara-bg);border-left-color:var(--impara)}
+  .ev.now{
+    background:#e5fcf1;border-color:#9ce4c6;border-left:5px solid #0e9a71;
+    box-shadow:0 4px 15px rgba(14,154,113,.15);
+  }
+  .ev .nm{font-weight:850;font-size:.82rem;line-height:1.35;color:var(--ink);overflow-wrap:anywhere}
+  .ev .meta{font-size:.76rem;font-weight:700;color:#495e77;line-height:1.35}
+  .ev .prof{font-size:.73rem;color:#546881;line-height:1.35}
+  .tag{
+    align-self:flex-start;margin-top:auto;font-size:.62rem;font-weight:850;letter-spacing:.055em;
+    padding:3px 8px;border-radius:6px;
+  }
+  .tag.para{background:var(--para);color:#fff}
+  .tag.impara{background:var(--impara);color:#fff}
+  .now-tag{
+    align-self:flex-start;margin-top:4px;border-radius:6px;padding:3px 8px;
+    color:#075b42;background:#bbf6d9;font-size:.61rem;font-weight:900;letter-spacing:.08em;
+  }
+
+  /* ---------- LEGEND ---------- */
+  .legend{
+    margin-top:17px;background:#fff;border:1px solid var(--line);border-radius:var(--radius);
+    padding:16px 20px;display:flex;flex-wrap:wrap;gap:20px;align-items:center;
+    font-size:.82rem;color:#415773;box-shadow:0 6px 18px rgba(26,47,79,.06);
+  }
+  .lg{display:flex;align-items:center;gap:8px}
+  .sw{width:24px;height:17px;border-radius:5px;border-left:4px solid}
+  .sw.both{background:var(--both-bg);border-color:var(--both)}
+  .sw.para{background:var(--para-bg);border-color:var(--para)}
+  .sw.impara{background:var(--impara-bg);border-color:var(--impara)}
+  .credit{margin-top:24px;text-align:center;color:#667990;font-size:.78rem;font-weight:650;letter-spacing:.04em}
+  .credit strong{color:#304fb5;font-weight:900;letter-spacing:.1em}
+
+  /* ---------- MOBILE: day chips + cards ---------- */
+  .daynav{
+    display:none;position:sticky;top:8px;z-index:10;
+    gap:8px;margin-top:16px;padding:9px;overflow-x:auto;
+    background:rgba(255,255,255,.93);border:1px solid var(--line);border-radius:15px;
+    box-shadow:0 7px 18px rgba(26,47,79,.11);
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+    scrollbar-width:none;-webkit-overflow-scrolling:touch;
+  }
+  .daynav::-webkit-scrollbar{display:none}
+  .daynav button{
+    flex:0 0 auto;min-height:44px;padding:10px 14px;border:1px solid #dfe6ee;
+    border-radius:10px;background:#f4f7fa;color:#47617b;font-size:.77rem;font-weight:850;
+    cursor:pointer;transition:background .18s,box-shadow .18s;
+  }
+  .daynav button:hover{background:#e5ecf4}
+  .daynav button.on{background:#1b3452;color:#fff;border-color:#1b3452;box-shadow:0 4px 10px rgba(27,52,82,.18)}
+  .daynav button.istoday::after{content:"";display:inline-block;margin-left:7px;width:6px;height:6px;border-radius:50%;background:#16aa7f;vertical-align:middle}
+  .daynav button.on.istoday::after{background:#75e8bb}
+
+  .cards{display:none;margin-top:13px}
+  .daycard{
+    background:#fff;border:1px solid var(--line);border-radius:18px;margin-bottom:14px;
+    overflow:hidden;box-shadow:0 6px 16px rgba(26,47,79,.07);scroll-margin-top:79px;
+  }
+  .daycard > h3{
+    display:flex;justify-content:space-between;align-items:center;gap:10px;
+    padding:14px 16px;background:#f7f9fc;border-bottom:1px solid var(--line);
+    font-size:.92rem;color:var(--ink);
+  }
+  .daycard.today > h3{background:#e8f9f1;border-color:#bfead6;color:#086b51}
+  .daycard h3 .pill{
+    padding:5px 9px;background:#e7edf4;border-radius:8px;white-space:nowrap;
+    color:#405a76;font-size:.65rem;font-weight:850;letter-spacing:.035em;
+  }
+  .daycard.today h3 .pill{background:#0d8268;color:#fff}
+  .slot{display:flex;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line)}
+  .slot:last-child{border-bottom:0}
+  .slot.now{background:#e9fbf2}
+  .slot .h{
+    min-width:60px;padding-top:11px;white-space:nowrap;
+    font-size:.78rem;font-weight:850;color:#506681;font-variant-numeric:tabular-nums;
+  }
+  .slot.now .h{color:#087157}
+  .slot .body{flex:1;min-width:0}
+  .empty-day{padding:24px;text-align:center;color:var(--muted);font-size:.88rem}
+
+  @media (max-width:1100px){
+    .controls{grid-template-columns:1fr;gap:16px}
+    .right-ctl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+    .ghost{max-width:none;min-height:52px}
+  }
+  @media (max-width:900px){
+    .hero{grid-template-columns:minmax(0,1fr) minmax(245px,300px);padding:30px}
+  }
+
+  @media (max-width:760px){
+    body{padding:12px 12px calc(40px + env(safe-area-inset-bottom))}
+    .hero{grid-template-columns:1fr;gap:20px;padding:25px 22px;border-radius:22px}
+    .hero::after{font-size:145px;right:5%;bottom:-35px}
+    .title h1{font-size:clamp(2.15rem,10vw,3rem);margin:17px 0 10px}
+    .title p{font-size:.85rem}
+    .today-box{padding:17px 18px;border-radius:15px}
+    #todayStr{font-size:1.15rem}
+    .date-label{margin-top:12px}
+    .week-badge{margin-top:10px}
+
+    .controls{margin-top:14px;padding:14px;gap:15px}
+    .seg button{min-height:56px;padding:9px 10px;gap:8px;font-size:.81rem;line-height:1.22}
+    .week-icon{width:29px;height:29px;font-size:.72rem}
+    .right-ctl{grid-template-columns:1fr;gap:8px}
+    .ghost{width:100%;min-height:50px}
+    .banner{font-size:.82rem;line-height:1.4;margin-top:12px}
+
+    .focus{display:block;margin-top:14px}
+    .focus-when{flex-direction:row;align-items:baseline;gap:8px;padding:12px 17px;border-right:0;border-bottom:1px solid rgba(255,255,255,.09)}
+    .focus-number{font-size:1.9rem;margin-left:auto}
+    .focus-detail{padding:16px;flex-wrap:wrap;gap:11px}
+    .focus-time{min-width:0;padding:8px 10px;font-size:.82rem}
+    .schedule-heading{margin:22px 0 0}
+    .schedule-heading h2{font-size:1.17rem}
+    .week-status{font-size:.65rem;padding:6px 8px}
+    .board{display:none}
+    .daynav{display:flex}
+    .cards{display:block}
+    .ev{min-height:0;padding:10px 12px}
+    .ev .nm{font-size:.86rem}
+    .ev .meta,.ev .prof{font-size:.78rem}
+    .legend{flex-direction:column;align-items:flex-start;gap:12px;padding:16px;font-size:.8rem}
+  }
+
+  @media (max-width:380px){
+    .hero{padding:22px 18px}
+    .seg button{justify-content:center;text-align:center;font-size:.78rem;padding:8px 6px}
+    .week-icon,.seg button.on::after{display:none}
+    .slot{gap:9px;padding:11px}
+    .slot .h{min-width:53px;font-size:.72rem}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{transition:none !important;animation:none !important;scroll-behavior:auto !important}
+    .ev:hover{transform:none}
+  }
+</style>
+</head>
+<body>
+<main class="wrap">
+
+  <header class="hero">
+    <div class="title">
+      <span class="eyebrow">Tehnologia Informației · Anul II · Grupa 1221</span>
+      <h1>Orar <span>Semestrul 1</span></h1>
+      <p>Îndrumător: <strong>Asistent. drd. ing Enachi Andrei</strong></p>
+    </div>
+    <div class="today-box">
+      <div class="live-line">
+        <span class="live-indicator"><span class="live-dot" aria-hidden="true"></span>ÎN TIMP REAL</span>
+        <time class="live-clock" id="clockStr">--:--</time>
+      </div>
+      <span class="date-label">ASTĂZI</span>
+      <time id="todayStr">—</time>
+      <span class="week-badge" id="todayWeek">—</span>
+    </div>
+  </header>
+
+  <section class="controls" aria-label="Controlează orarul">
+    <div class="week-controls">
+      <p class="control-title">Alege săptămâna</p>
+      <div class="seg" id="weekSeg" role="group" aria-label="Tipul săptămânii">
+        <button type="button" data-w="impara"><span class="week-icon" aria-hidden="true">01</span><span>Săptămână impară</span></button>
+        <button type="button" data-w="para"><span class="week-icon" aria-hidden="true">02</span><span>Săptămână pară</span></button>
+      </div>
+    </div>
+    <div class="action-controls">
+      <p class="control-title">Acțiuni rapide</p>
+      <div class="right-ctl">
+        <button type="button" class="ghost" id="btnToday"><span class="btn-symbol" aria-hidden="true">↺</span> Săptămâna curentă</button>
+        <button type="button" class="ghost on" id="btnHighlight"><span class="btn-symbol" aria-hidden="true">◎</span> Evidențiază azi</button>
+      </div>
+    </div>
+  </section>
+
+  <div class="banner" id="banner" role="status"></div>
+
+  <section class="focus" aria-label="Rezumatul zilei">
+    <div class="focus-when">
+      <span class="caption">PROGRAM AZI</span>
+      <span class="focus-number" id="todayCount">—</span>
+      <span class="unit" id="todayCountLabel">ACTIVITĂȚI</span>
+    </div>
+    <div class="focus-detail" aria-live="polite">
+      <div class="focus-content">
+        <span class="focus-label" id="focusLabel">—</span>
+        <strong class="focus-name" id="focusName">—</strong>
+        <div class="focus-sub" id="focusMeta"></div>
+      </div>
+      <span class="focus-time" id="focusTime" hidden></span>
+    </div>
+  </section>
+
+  <div class="schedule-heading">
+    <div>
+      <p class="kicker">PLANIFICAREA TA</p>
+      <h2>Programul săptămânii</h2>
+    </div>
+    <span class="week-status" id="weekStatus">—</span>
+  </div>
+
+  <div class="daynav" id="dayNav" aria-label="Alege ziua"></div>
+
+  <div class="board">
+    <table>
+      <thead><tr id="headRow"></tr></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+
+  <div class="cards" id="cards"></div>
+
+  <div class="legend">
+    <div class="lg"><span class="sw both"></span> În fiecare săptămână</div>
+    <div class="lg"><span class="sw para"></span> Doar săptămâna pară (triunghiul de sus)</div>
+    <div class="lg"><span class="sw impara"></span> Doar săptămâna impară (triunghiul de jos)</div>
+  </div>
+  <footer class="credit">Powered by <strong>NRB</strong></footer>
+
+</main>
+
+<script>
+/* ============================================================
+   DATE ORAR — coloana din dreapta (grupa 1221), cu denumiri dezvoltate
+   week: 'all'  = în fiecare săptămână
+         'para' = triunghiul de sus  (săptămâna pară)
+         'impara' = triunghiul de jos (săptămâna impară)
+   span: câte intervale orare ocupă blocul (implicit 1)
+   start: ora reală de început, dacă începe între două ore din tabel
+   ============================================================ */
+const SLOTS = ['09 – 11','11 – 13','13 – 15','15 – 17','17 – 19','19 – 20'];
+const SLOT_RANGE = [[9,11],[11,13],[13,15],[15,17],[17,19],[19,20]];
+const DAYS = [
+  {key:'luni',     label:'LUNI'},
+  {key:'marti',    label:'MARȚI'},
+  {key:'miercuri', label:'MIERCURI'},
+  {key:'joi',      label:'JOI'},
+  {key:'vineri',   label:'VINERI'}
+];
+
+const ORAR = {
+  luni: {
+    0:[{nm:'REȚELE LOCALE DE CALCULATOARE', meta:'CURS, DP17', prof:'POPA SORIN', week:'all'}],
+    1:[{nm:'REȚELE LOCALE DE CALCULATOARE', meta:'LABORATOR, AP6', week:'para'},
+       {nm:'PROGRAMARE LOGICĂ ȘI PROGRAMARE FUNCȚIONALĂ', meta:'LABORATOR, D216', week:'impara'}],
+    4:[{nm:'ELECTROTEHNICĂ', meta:'CURS, DP12', prof:'BANU IONUȚ', week:'all'}],
+    5:[{nm:'ELECTROTEHNICĂ', meta:'SEMINAR, DP12', week:'all'}]
+  },
+  marti: {
+    0:[{nm:'GRAFICĂ ASISTATĂ DE CALCULATOR 2', meta:'PROIECT, AP22', week:'all'}],
+    2:[{nm:'PROGRAMARE LOGICĂ ȘI PROGRAMARE FUNCȚIONALĂ', meta:'CURS, BI30', prof:'POPA DAN', week:'all'}],
+    3:[{nm:'ELECTROTEHNICĂ', meta:'LABORATOR, LEN', week:'all'}],
+    4:[{nm:'PROIECTAREA ALGORITMILOR', meta:'SEMINAR, D217', week:'para'},
+       {nm:'PROIECTAREA ALGORITMILOR', meta:'LABORATOR, D217', week:'impara'}]
+  },
+  miercuri: {
+    0:[{nm:'ELECTRONICĂ DIGITALĂ', meta:'LABORATOR, AP6', week:'all'}],
+    1:[{nm:'ELECTRONICĂ DIGITALĂ', meta:'SEMINAR, AP6', week:'para'}],
+    2:[{nm:'ENGLEZĂ TEHNICĂ III', meta:'SEMINAR, BI21', week:'impara'}],
+    3:[{nm:'GRAFICĂ ASISTATĂ DE CALCULATOR 2', meta:'PROIECT, AP22', week:'all'}],
+    4:[{nm:'PEDAGOGIE II', meta:'D215', week:'all', start:18, span:2}]
+  },
+  joi: {
+    0:[{nm:'PROIECTAREA ALGORITMILOR', meta:'CURS, BI22', week:'all'}],
+    1:[{nm:'ELECTRONICĂ DIGITALĂ', meta:'CURS, BI22', week:'all', start:12, span:2}],
+    4:[{nm:'PEDAGOGIE II', meta:'D215', week:'all'}]
+  },
+  vineri: {}
+};
+
+/* ============================================================
+   PARITATE SĂPTĂMÂNĂ
+   Referință: luni 28.09.2026 = săptămâna 1 = IMPARĂ
+   ============================================================ */
+const REF_MONDAY = new Date(2026, 8, 28);
+
+function mondayOf(d){
+  const x = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  const shift = (x.getDay() + 6) % 7;      // luni = 0
+  x.setDate(x.getDate() - shift);
+  return x;
+}
+function parityOf(d){
+  const weeks = Math.round((mondayOf(d) - REF_MONDAY) / 604800000);
+  return (((weeks % 2) + 2) % 2) === 0 ? 'impara' : 'para';
+}
+
+let NOW            = new Date();
+let CURRENT_PARITY = parityOf(NOW);
+let TODAY_IDX      = (NOW.getDay() + 6) % 7;   // 0..4 = Luni..Vineri, 5/6 = weekend
+let CURRENT_SLOT   = SLOT_RANGE.findIndex(([a,b]) => NOW.getHours() >= a && NOW.getHours() < b);
+
+let view      = CURRENT_PARITY;   // 'impara' | 'para'
+let highlight = true;
+let dayFilter = 'all';            // 'all' | cheie zi (doar pe mobil)
+let previewing = false;           // o alegere manuală diferită de săptămâna curentă
+let refreshTimer;
+
+/* ============================================================
+   RANDARE
+   ============================================================ */
+const WEEK_LABEL = {para:'pară', impara:'impară'};
+
+function visible(ev){
+  return ev.week === 'all' || ev.week === view;
+}
+function eventStart(ev, r){
+  return ev.start ?? SLOT_RANGE[r][0];
+}
+
+function eventEnd(ev, r){
+  return SLOT_RANGE[r + (ev.span || 1) - 1][1];
+}
+
+function isEventActive(ev, r){
+  const minute = NOW.getHours() * 60 + NOW.getMinutes();
+  return minute >= eventStart(ev, r) * 60 && minute < eventEnd(ev, r) * 60;
+}
+
+function evNode(ev, isNow = false){
+  const el = document.createElement('div');
+  el.className = 'ev ' + (ev.week === 'all' ? 'both' : ev.week);
+  if (isNow) el.classList.add('now');
+
+  const nm = document.createElement('div');
+  nm.className = 'nm';
+  nm.textContent = ev.nm;
+  el.appendChild(nm);
+
+  if (ev.meta){
+    const m = document.createElement('div');
+    m.className = 'meta';
+    m.textContent = ev.meta;
+    el.appendChild(m);
+  }
+  if (ev.prof){
+    const p = document.createElement('div');
+    p.className = 'prof';
+    p.textContent = ev.prof;
+    el.appendChild(p);
+  }
+  if (ev.week !== 'all'){
+    const t = document.createElement('span');
+    t.className = 'tag ' + ev.week;
+    t.textContent = 'SĂPT. ' + WEEK_LABEL[ev.week].toLocaleUpperCase('ro-RO');
+    el.appendChild(t);
+  }
+  if (isNow){
+    const t = document.createElement('span');
+    t.className = 'now-tag';
+    t.textContent = 'ACUM';
+    el.appendChild(t);
+  }
+  el.title = [ev.nm, ev.meta, ev.prof].filter(Boolean).join(' — ');
+  return el;
+}
+
+function renderTable(){
+  const head = document.getElementById('headRow');
+  const body = document.getElementById('tbody');
+  head.innerHTML = '';
+  body.innerHTML = '';
+
+  const corner = document.createElement('th');
+  corner.textContent = 'ORA';
+  head.appendChild(corner);
+
+  DAYS.forEach((d, i) => {
+    const th = document.createElement('th');
+    th.innerHTML = d.label;
+    if (highlight && i === TODAY_IDX){
+      th.classList.add('now');
+      const s = document.createElement('small');
+      s.textContent = 'ASTĂZI';
+      th.appendChild(s);
+    }
+    head.appendChild(th);
+  });
+
+  const skip = {};   // day -> remaining rowspan
+  SLOTS.forEach((slot, r) => {
+    const tr = document.createElement('tr');
+
+    const hc = document.createElement('td');
+    hc.className = 'hour' + (highlight && r === CURRENT_SLOT && TODAY_IDX < 5 ? ' now' : '');
+    hc.textContent = slot;
+    tr.appendChild(hc);
+
+    DAYS.forEach((d, i) => {
+      if (skip[d.key]) { skip[d.key]--; return; }
+
+      const list = (ORAR[d.key][r] || []).filter(visible);
+      const td = document.createElement('td');
+      td.className = 'daycol';
+      if (highlight && i === TODAY_IDX) td.classList.add('today-col');
+
+      if (!list.length){
+        td.classList.add('free');
+      } else {
+        const span = Math.max(...list.map(e => e.span || 1));
+        if (span > 1){ td.rowSpan = span; skip[d.key] = span - 1; }
+        const late = list.find(ev => eventStart(ev, r) > SLOT_RANGE[r][0]);
+        if (late){
+          td.classList.add('partial-start');
+          const free = document.createElement('div');
+          free.className = 'partial-free';
+          free.textContent = formatHour(SLOT_RANGE[r][0]) + ' – ' +
+            formatHour(eventStart(late, r)) + ' LIBER';
+          td.appendChild(free);
+        }
+        list.forEach(ev => td.appendChild(evNode(ev,
+          highlight && view === CURRENT_PARITY && i === TODAY_IDX &&
+          isEventActive(ev, r)
+        )));
+      }
+      tr.appendChild(td);
+    });
+
+    body.appendChild(tr);
+  });
+}
+
+function countFor(dayKey){
+  return SLOTS.reduce((n, _, r) => n + (ORAR[dayKey][r] || []).filter(visible).length, 0);
+}
+
+function renderDayNav(){
+  const nav = document.getElementById('dayNav');
+  const scrollPosition = dayFilter === 'all' ? 0 : nav.scrollLeft;
+  nav.innerHTML = '';
+
+  const mk = (key, label, isToday) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.textContent = label;
+    b.dataset.d = key;
+    b.setAttribute('aria-pressed', String(dayFilter === key));
+    if (dayFilter === key) b.classList.add('on');
+    if (isToday) b.classList.add('istoday');
+    nav.appendChild(b);
+  };
+
+  mk('all', 'Toate zilele', false);
+  DAYS.forEach((d, i) => mk(d.key, d.label, highlight && i === TODAY_IDX));
+  nav.scrollLeft = scrollPosition;
+}
+
+function renderCards(){
+  const box = document.getElementById('cards');
+  box.innerHTML = '';
+
+  DAYS.forEach((d, i) => {
+    if (dayFilter !== 'all' && dayFilter !== d.key) return;
+
+    const isToday = i === TODAY_IDX;
+    const card = document.createElement('div');
+    card.className = 'daycard' + (highlight && isToday ? ' today' : '');
+    card.id = 'card-' + d.key;
+
+    const total = countFor(d.key);
+    const h = document.createElement('h3');
+    h.innerHTML = '<strong>' + d.label + '</strong>';
+    const pill = document.createElement('span');
+    pill.className = 'pill';
+    pill.textContent = (highlight && isToday ? 'ASTĂZI · ' : '') +
+      (total === 0 ? 'LIBER' : total + (total === 1 ? ' ACTIVITATE' : ' ACTIVITĂȚI'));
+    h.appendChild(pill);
+    card.appendChild(h);
+
+    let any = false;
+    SLOTS.forEach((_, r) => {
+      const list = (ORAR[d.key][r] || []).filter(visible);
+      if (!list.length) return;
+      any = true;
+      const isNow = highlight && view === CURRENT_PARITY && isToday &&
+        list.some(ev => isEventActive(ev, r));
+
+      const row = document.createElement('div');
+      row.className = 'slot' + (isNow ? ' now' : '');
+      const hh = document.createElement('div');
+      hh.className = 'h';
+      hh.textContent = String(Math.min(...list.map(ev => eventStart(ev, r)))).padStart(2, '0') +
+        ' – ' + String(Math.max(...list.map(ev => eventEnd(ev, r)))).padStart(2, '0');
+      const bb = document.createElement('div');
+      bb.className = 'body';
+      list.forEach(ev => bb.appendChild(evNode(ev,
+        highlight && view === CURRENT_PARITY && isToday && isEventActive(ev, r)
+      )));
+      row.appendChild(hh); row.appendChild(bb);
+      card.appendChild(row);
+    });
+
+    if (!any){
+      const e = document.createElement('div');
+      e.className = 'empty-day';
+      e.textContent = 'ZI LIBERĂ';
+      card.appendChild(e);
+    }
+    box.appendChild(card);
+  });
+}
+
+function setText(id, value){
+  const el = document.getElementById(id);
+  if (el.textContent !== value) el.textContent = value;
+}
+
+function formatHour(hour){
+  return String(hour).padStart(2, '0') + ':00';
+}
+
+function renderClock(){
+  const day = document.getElementById('todayStr');
+  setText('todayStr', NOW.toLocaleDateString('ro-RO', {
+    weekday:'long', day:'2-digit', month:'long', year:'numeric'
+  }));
+  day.dateTime = [NOW.getFullYear(), String(NOW.getMonth() + 1).padStart(2, '0'),
+    String(NOW.getDate()).padStart(2, '0')].join('-');
+
+  const clock = document.getElementById('clockStr');
+  setText('clockStr', NOW.toLocaleTimeString('ro-RO', {hour:'2-digit', minute:'2-digit', hour12:false}));
+  clock.dateTime = String(NOW.getHours()).padStart(2, '0') + ':' +
+    String(NOW.getMinutes()).padStart(2, '0');
+
+  const badge = document.getElementById('todayWeek');
+  badge.className = 'week-badge ' + CURRENT_PARITY;
+  setText('todayWeek', 'SĂPTĂMÂNA ' + WEEK_LABEL[CURRENT_PARITY].toLocaleUpperCase('ro-RO'));
+}
+
+function renderFocus(){
+  const day = DAYS[TODAY_IDX];
+  const events = [];
+  if (day){
+    SLOTS.forEach((_, r) => {
+      (ORAR[day.key][r] || []).filter(ev => ev.week === 'all' || ev.week === CURRENT_PARITY)
+        .forEach(ev => events.push({
+          ...ev, start:eventStart(ev, r), end:eventEnd(ev, r)
+        }));
+    });
+  }
+
+  setText('todayCount', String(events.length));
+  setText('todayCountLabel', events.length === 1 ? 'ACTIVITATE' : 'ACTIVITĂȚI');
+
+  const minute = NOW.getHours() * 60 + NOW.getMinutes();
+  const active = events.find(ev => minute >= ev.start * 60 && minute < ev.end * 60);
+  const upcoming = events.find(ev => minute < ev.start * 60);
+  const lesson = active || upcoming;
+  const time = document.getElementById('focusTime');
+
+  if (lesson){
+    setText('focusLabel', active ? 'ÎN DESFĂȘURARE ACUM' : 'URMĂTOAREA ACTIVITATE');
+    setText('focusName', lesson.nm);
+    setText('focusMeta', [lesson.meta, lesson.prof].filter(Boolean).join(' · '));
+    setText('focusTime', formatHour(lesson.start) + ' – ' + formatHour(lesson.end));
+    time.hidden = false;
+  } else {
+    setText('focusLabel', events.length ? 'PROGRAM ÎNCHEIAT' : 'ZI LIBERĂ');
+    setText('focusName', events.length ? 'AI TERMINAT PE AZI' : 'FĂRĂ ACTIVITĂȚI ASTĂZI');
+    setText('focusMeta', events.length
+      ? 'Toate activitățile de astăzi s-au încheiat.'
+      : 'Nu ai activități programate pentru această zi.');
+    time.hidden = true;
+  }
+}
+
+function renderBanner(){
+  const b = document.getElementById('banner');
+  b.className = 'banner ' + view;
+  const nextMonday = mondayOf(NOW);
+  nextMonday.setDate(nextMonday.getDate() + 7);
+  const nextDate = nextMonday.toLocaleDateString('ro-RO', {
+    day:'2-digit', month:'2-digit', year:'numeric'
+  });
+  const nextWeek = view === 'para' ? 'impara' : 'para';
+  b.textContent = view === CURRENT_PARITY
+    ? 'Acum este săptămâna ' + WEEK_LABEL[view] + '. Din ' + nextDate +
+      ' începe săptămâna ' + WEEK_LABEL[nextWeek] + '.'
+    : 'Previzualizezi săptămâna ' + WEEK_LABEL[view] +
+      '. Săptămâna curentă este ' + WEEK_LABEL[CURRENT_PARITY] + '.';
+
+  const status = document.getElementById('weekStatus');
+  status.className = 'week-status ' + view;
+  setText('weekStatus', 'SĂPTĂMÂNĂ ' + WEEK_LABEL[view].toLocaleUpperCase('ro-RO'));
+}
+
+function render(){
+  renderClock();
+  renderFocus();
+  renderBanner();
+  document.querySelectorAll('#weekSeg button').forEach(btn => {
+    const selected = btn.dataset.w === view;
+    btn.classList.toggle('on', selected);
+    btn.setAttribute('aria-pressed', String(selected));
+  });
+  const toggle = document.getElementById('btnHighlight');
+  toggle.classList.toggle('on', highlight);
+  toggle.setAttribute('aria-pressed', String(highlight));
+  renderDayNav();
+  renderTable();
+  renderCards();
+}
+
+function refreshNow(date = new Date()){
+  const previousDay = NOW.toDateString();
+  const previousParity = CURRENT_PARITY;
+  const previousSlot = CURRENT_SLOT;
+  const previousHour = NOW.getHours();
+  NOW = date;
+  CURRENT_PARITY = parityOf(NOW);
+  TODAY_IDX = (NOW.getDay() + 6) % 7;
+  CURRENT_SLOT = SLOT_RANGE.findIndex(([a,b]) => NOW.getHours() >= a && NOW.getHours() < b);
+
+  if (previewing && view === CURRENT_PARITY) previewing = false;
+  if (!previewing) view = CURRENT_PARITY;
+
+  if (previousDay !== NOW.toDateString() || previousParity !== CURRENT_PARITY ||
+      previousSlot !== CURRENT_SLOT || previousHour !== NOW.getHours()){
+    render();
+  } else {
+    renderClock();
+    renderFocus();
+  }
+}
+
+function scheduleNextMinute(){
+  clearTimeout(refreshTimer);
+  const now = new Date();
+  const delay = 60000 - now.getSeconds() * 1000 - now.getMilliseconds() + 50;
+  refreshTimer = setTimeout(() => {
+    refreshNow();
+    scheduleNextMinute();
+  }, delay);
+}
+
+document.getElementById('weekSeg').addEventListener('click', e => {
+  const btn = e.target.closest('button[data-w]');
+  if (!btn) return;
+  view = btn.dataset.w;
+  previewing = view !== CURRENT_PARITY;
+  render();
+});
+document.getElementById('dayNav').addEventListener('click', e => {
+  const btn = e.target.closest('button[data-d]');
+  if (!btn) return;
+  dayFilter = btn.dataset.d;
+  render();
+});
+document.getElementById('btnToday').addEventListener('click', () => {
+  previewing = false;
+  view = CURRENT_PARITY;
+  dayFilter = 'all';
+  render();
+});
+document.getElementById('btnHighlight').addEventListener('click', () => {
+  highlight = !highlight;
+  render();
+});
+
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden){
+    refreshNow();
+    scheduleNextMinute();
+  }
+});
+window.addEventListener('focus', () => { refreshNow(); scheduleNextMinute(); });
+window.addEventListener('pageshow', () => { refreshNow(); scheduleNextMinute(); });
+
+render();
+scheduleNextMinute();
+</script>
+</body>
+</html>
