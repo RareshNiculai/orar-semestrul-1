@@ -542,7 +542,7 @@ let CURRENT_SLOT   = SLOT_RANGE.findIndex(([a,b]) => NOW.getHours() >= a && NOW.
 
 let view      = CURRENT_PARITY;   // 'impara' | 'para'
 let highlight = true;
-let dayFilter = 'all';            // 'all' | cheie zi (doar pe mobil)
+let dayFilter = 'all';            // 'all' | 'today' | cheie zi (doar pe mobil)
 let previewing = false;           // o alegere manuală diferită de săptămâna curentă
 let refreshTimer;
 
@@ -684,23 +684,50 @@ function renderDayNav(){
     b.type = 'button';
     b.textContent = label;
     b.dataset.d = key;
-    b.setAttribute('aria-pressed', String(dayFilter === key));
-    if (dayFilter === key) b.classList.add('on');
-    if (isToday) b.classList.add('istoday');
+    const selected = dayFilter === key || (dayFilter === 'today' && isToday);
+    b.setAttribute('aria-pressed', String(selected));
+    if (selected) b.classList.add('on');
+    if (highlight && isToday) b.classList.add('istoday');
     nav.appendChild(b);
   };
 
   mk('all', 'Toate zilele', false);
-  DAYS.forEach((d, i) => mk(d.key, d.label, highlight && i === TODAY_IDX));
+  DAYS.forEach((d, i) => mk(d.key, d.label, i === TODAY_IDX));
+  if (dayFilter === 'today' && TODAY_IDX >= DAYS.length){
+    mk('today', NOW.toLocaleDateString('ro-RO', {weekday:'long'}).toLocaleUpperCase('ro-RO'), true);
+  }
   nav.scrollLeft = scrollPosition;
+  if (dayFilter === 'today'){
+    const selected = nav.querySelector('button.on');
+    nav.scrollLeft = selected.offsetLeft - (nav.clientWidth - selected.offsetWidth) / 2;
+  }
 }
 
 function renderCards(){
   const box = document.getElementById('cards');
   box.innerHTML = '';
+  if (dayFilter === 'today' && TODAY_IDX >= DAYS.length){
+    const card = document.createElement('div');
+    card.className = 'daycard' + (highlight ? ' today' : '');
+    card.id = 'card-today';
+    const h = document.createElement('h3');
+    h.innerHTML = '<strong>' + NOW.toLocaleDateString('ro-RO', {weekday:'long'}).toLocaleUpperCase('ro-RO') + '</strong>';
+    const pill = document.createElement('span');
+    pill.className = 'pill';
+    pill.textContent = (highlight ? 'ASTĂZI · ' : '') + 'LIBER';
+    h.appendChild(pill);
+    card.appendChild(h);
+    const empty = document.createElement('div');
+    empty.className = 'empty-day';
+    empty.textContent = 'FĂRĂ ACTIVITĂȚI ASTĂZI';
+    card.appendChild(empty);
+    box.appendChild(card);
+    return;
+  }
 
   DAYS.forEach((d, i) => {
-    if (dayFilter !== 'all' && dayFilter !== d.key) return;
+    if (dayFilter !== 'all' && dayFilter !== d.key &&
+        !(dayFilter === 'today' && i === TODAY_IDX)) return;
 
     const isToday = i === TODAY_IDX;
     const card = document.createElement('div');
@@ -903,6 +930,18 @@ document.getElementById('btnToday').addEventListener('click', () => {
   render();
 });
 document.getElementById('btnHighlight').addEventListener('click', () => {
+  if (window.matchMedia('(max-width:760px)').matches){
+    refreshNow();
+    highlight = true;
+    dayFilter = 'today';
+    render();
+    const todayKey = DAYS[TODAY_IDX]?.key || 'today';
+    document.getElementById('card-' + todayKey).scrollIntoView({
+      behavior:window.matchMedia('(prefers-reduced-motion:reduce)').matches ? 'auto' : 'smooth',
+      block:'start'
+    });
+    return;
+  }
   highlight = !highlight;
   render();
 });
